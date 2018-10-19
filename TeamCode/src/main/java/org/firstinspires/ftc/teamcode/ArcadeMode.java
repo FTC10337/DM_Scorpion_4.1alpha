@@ -14,9 +14,10 @@ public class ArcadeMode extends OpMode
 
     private ElapsedTime runtime = new ElapsedTime();
     boolean slowMo = false;
-    boolean isButtonPressed = true;
     double turnCoefficient = 1;
     double driveCoefficient = 1;
+
+    private ElapsedTime slowTelemetry = new ElapsedTime();
 
     @Override
     public void init() {
@@ -38,6 +39,7 @@ public class ArcadeMode extends OpMode
 
     @Override
     public void start() {
+        slowTelemetry.reset();
         runtime.reset();
     }
 
@@ -55,47 +57,44 @@ public class ArcadeMode extends OpMode
         double drive = -gamepad1.left_stick_y;
         double turn  =  gamepad1.right_stick_x;
 
-        telemetry.addData("Path0",  "Starting at %7d :%7d :%7d :%7d",
-                scorpion.leftFront.getCurrentPosition(),
-                scorpion.leftRear.getCurrentPosition(),
-                scorpion.rightFront.getCurrentPosition(),
-                scorpion.rightRear.getCurrentPosition());
-        telemetry.update();
+        //Activating slowMo slow motion mode with controller left bumper
+        if (gamepad1.left_bumper) {
+            slowMo = true;
+            turnCoefficient = 3;
+            driveCoefficient = 1.5;
+        }else{
+            slowMo = false;
+            turnCoefficient = 1.5;
+            driveCoefficient = 1;
+        }
+        telemetry.addData("SlowMo mode is ", slowMo);
 
         // Smooth and deadzone the joystick values
         drive = scorpion.smoothPowerCurve(scorpion.deadzone(drive, 0.10)) / driveCoefficient;
         turn = scorpion.smoothPowerCurve(scorpion.deadzone(turn, 0.10)) / turnCoefficient;
 
+
         leftPower    = Range.clip(drive + turn, -1.0, 1.0) ;
         rightPower   = Range.clip(drive - turn, -1.0, 1.0) ;
 
+        // Update the encoder data every 1/10 second
+        if (slowTelemetry.milliseconds() > 100) {
+            slowTelemetry.reset();
+            telemetry.addData("Path0",  "Now at %7d :%7d :%7d :%7d",
+                    scorpion.leftFront.getCurrentPosition(),
+                    scorpion.leftRear.getCurrentPosition(),
+                    scorpion.rightFront.getCurrentPosition(),
+                    scorpion.rightRear.getCurrentPosition());
+                    // Show the elapsed game time and wheel power.
+                    //telemetry.addData("Status", "Run Time: " + runtime.toString());
+                    telemetry.addData("Motors", "left (%.2f), right (%.2f)", leftPower, rightPower);
+                    telemetry.update();
+        }
+
+
         // Send calculated power to wheels
-        scorpion.leftFront.setPower(leftPower);
-        scorpion.leftRear.setPower(leftPower);
-        scorpion.rightFront.setPower(rightPower);
-        scorpion.rightRear.setPower(rightPower);
+        scorpion.setPower(leftPower, rightPower);
 
-        //Activating slowMo slow motion mode with controller left bumper
-        if (gamepad1.left_bumper && isButtonPressed) {
-            slowMo = true;
-            telemetry.addData("Says", "SlowMo is ON");
-        }else{
-            slowMo = false;
-            telemetry.addData("Says", "SlowMo is OFF");
-        }
-
-        //Setting new values if slowMo is true
-        if (slowMo) {
-            turnCoefficient = 4;
-            driveCoefficient = 2;
-        }else{
-            turnCoefficient = 1;
-            driveCoefficient = 1;
-        }
-
-        // Show the elapsed game time and wheel power.
-        telemetry.addData("Status", "Run Time: " + runtime.toString());
-        telemetry.addData("Motors", "left (%.2f), right (%.2f)", leftPower, rightPower);
     }
 
     /*
