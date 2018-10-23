@@ -1,15 +1,16 @@
+/*
+ *  This class defines and encapsulates everything around the drivetrain
+ */
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.hardware.adafruit.AdafruitBNO055IMU;
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.VoltageSensor;
-import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
-import com.qualcomm.robotcore.util.RobotLog;
-import com.qualcomm.robotcore.hardware.Servo;
-
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 
 public class DriveTrain {
 
@@ -18,7 +19,81 @@ public class DriveTrain {
     public DcMotor leftRear = null;
     public DcMotor rightFront = null;
     public DcMotor rightRear = null;
+    private HardwareMap hwMap           =  null;
 
+
+
+
+    public DriveTrain() {
+    }
+
+    /**
+     * Init the drive train.
+     *
+     * @param ahwMap -- the hardwareMap being used
+     */
+    public void init (HardwareMap ahwMap) {
+
+        hwMap = ahwMap;
+
+        // Initialize the hardware variables.
+        leftFront  = hwMap.get(DcMotor.class, "left-front");
+        leftRear = hwMap.get(DcMotor.class, "left-rear");
+        rightFront = hwMap.get(DcMotor.class, "right-front");
+        rightRear = hwMap.get(DcMotor.class, "right-rear");
+
+        //Setting direction of motor's rotation
+        leftFront.setDirection(DcMotor.Direction.FORWARD);
+        leftRear.setDirection(DcMotor.Direction.FORWARD);
+        rightFront.setDirection(DcMotor.Direction.REVERSE);
+        rightRear.setDirection(DcMotor.Direction.REVERSE);
+
+        //setting motors to use Encoders
+        setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        //setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);       // Temporary until encoders fixed
+        setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        //Setting motors with zero power when initializing
+        setPower(0.0, 0.0);
+    }
+
+    /**
+     * Set all drive motors to the specified mode
+     *
+     * @param mode -- What mode to use
+     */
+    public void setMode(DcMotor.RunMode mode) {
+        leftFront.setMode(mode);
+        leftRear.setMode(mode);
+        rightFront.setMode(mode);
+        rightRear.setMode(mode);
+    }
+
+    /**
+     * Set power to drive train motors.  Insures range is within bounds of -1 to 1
+     * @param left -- left side power
+     * @param right -- right side power
+     */
+    public void setPower (double left, double right) {
+        left = Range.clip(left, -1.0, 1.0);
+        right = Range.clip(right, -1.0, 1.0);
+        leftFront.setPower(left);
+        leftRear.setPower(left);
+        rightFront.setPower(right);
+        rightRear.setPower(right);
+    }
+
+    /**
+     * Set the motors to FLOAT or BRAKE mode
+     *
+     * @param mode -- what mode to set motors to
+     */
+    public void setZeroMode(DcMotor.ZeroPowerBehavior mode) {
+        leftFront.setZeroPowerBehavior(mode);
+        leftRear.setZeroPowerBehavior(mode);
+        rightFront.setZeroPowerBehavior(mode);
+        rightRear.setZeroPowerBehavior(mode);
+    }
     /**
      * Add deadzone to a stick value
      *
@@ -75,80 +150,8 @@ public class DriveTrain {
         else return 0.0;
     }
 
-    HardwareMap hwMap           =  null;
 
-    private ElapsedTime period  = new ElapsedTime();
-    public DriveTrain() {
-    }
 
-    /**
-     * Init the drive train.
-     *
-     * @param ahwMap -- the hardwareMap being used
-     */
-    public void init (HardwareMap ahwMap) {
-
-        hwMap = ahwMap;
-
-        // Initialize the hardware variables.
-        leftFront  = hwMap.get(DcMotor.class, "left-front");
-        leftRear = hwMap.get(DcMotor.class, "left-rear");
-        rightFront = hwMap.get(DcMotor.class, "right-front");
-        rightRear = hwMap.get(DcMotor.class, "right-rear");
-
-        //Setting direction of motor's rotation
-        leftFront.setDirection(DcMotor.Direction.FORWARD);
-        leftRear.setDirection(DcMotor.Direction.FORWARD);
-        rightFront.setDirection(DcMotor.Direction.REVERSE);
-        rightRear.setDirection(DcMotor.Direction.REVERSE);
-
-        //setting motors to use Encoders
-        setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);       // Temporary until encoders fixed
-        // setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-        //Setting motors with zero power when initializing
-        setPower(0.0, 0.0);
-
-    }
-
-    /**
-     * Set all drive motors to the specified mode
-     *
-     * @param mode -- What mode to use
-     */
-    public void setMode(DcMotor.RunMode mode) {
-        leftFront.setMode(mode);
-        leftRear.setMode(mode);
-        rightFront.setMode(mode);
-        rightRear.setMode(mode);
-    }
-
-    /**
-     * Set power to drive train motors.  Insures range is within bounds of -1 to 1
-     * @param left -- left side power
-     * @param right -- right side power
-     */
-    public void setPower (double left, double right) {
-        left = Range.clip(left, -1.0, 1.0);
-        right = Range.clip(right, -1.0, 1.0);
-        leftFront.setPower(left);
-        leftRear.setPower(left);
-        rightFront.setPower(right);
-        rightRear.setPower(right);
-    }
-
-    /**
-     * Set the motors to FLOAT or BRAKE mode
-     *
-     * @param mode -- what mode to set motors to
-     */
-    public void setZeroMode(DcMotor.ZeroPowerBehavior mode) {
-        leftFront.setZeroPowerBehavior(mode);
-        leftRear.setZeroPowerBehavior(mode);
-        rightFront.setZeroPowerBehavior(mode);
-        rightRear.setZeroPowerBehavior(mode);
-    }
 
 }
 

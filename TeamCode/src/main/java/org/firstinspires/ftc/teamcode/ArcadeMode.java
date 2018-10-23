@@ -78,13 +78,14 @@ public class ArcadeMode extends OpMode
         rightPower   = Range.clip(drive - turn, -1.0, 1.0) ;
 
         // Update the encoder data every 1/10 second
-        if (slowTelemetry.milliseconds() > 100) {
+        if (slowTelemetry.milliseconds() > 10) {
             slowTelemetry.reset();
+
             telemetry.addData("Path0",  "Now at %7d :%7d :%7d :%7d",
-                    scorpion.leftFront.getCurrentPosition(),
-                    scorpion.leftRear.getCurrentPosition(),
-                    scorpion.rightFront.getCurrentPosition(),
-                    scorpion.rightRear.getCurrentPosition());
+                    scorpion.leftFront.getCurrentPosition(),    // labeled B
+                    scorpion.leftRear.getCurrentPosition(),     // labeled C
+                    scorpion.rightFront.getCurrentPosition(),   // labeled A
+                    scorpion.rightRear.getCurrentPosition());   // labeled D
                     // Show the elapsed game time and wheel power.
                     //telemetry.addData("Status", "Run Time: " + runtime.toString());
                     telemetry.addData("Motors", "left (%.2f), right (%.2f)", leftPower, rightPower);
