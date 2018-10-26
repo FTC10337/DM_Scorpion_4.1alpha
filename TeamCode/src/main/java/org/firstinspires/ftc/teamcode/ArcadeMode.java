@@ -97,9 +97,12 @@ public class ArcadeMode extends OpMode
         leftPower    = Range.clip(drive + turn, -1.0, 1.0) ;
         rightPower   = Range.clip(drive - turn, -1.0, 1.0) ;
 
+        // Smooth and deadzone the lift and pivot inputs before using
+        lift = scorpion.smoothPowerCurve(scorpion.deadzone(lift, 0.1));
         liftPower    = Range.clip(lift, -1.0, 1.0);
 //        intakePowerIn  = Range.clip(intakeControlIn, 0, 1.0);
 //        intakePowerOut = Range.clip(intakeControlOut, -1.0, 0);
+        pivotControl = scorpion.smoothPowerCurve(scorpion.deadzone(pivotControl, 0.1));
         pivotPower = Range.clip(pivotControl/3, -0.5, 0.5);
 //
 //        scorpion.intake.setPower(intakePowerIn);

@@ -24,8 +24,9 @@ import java.io.UnsupportedEncodingException;
 @TeleOp(name = "TestPixyCam", group = "Testing")
 public class TestPixyCam extends OpMode {
     PixyCam pixyCam;
-    PixyBlockList blocks1;
-    PixyBlockList blocks2;
+    PixyBlock block;
+    // PixyBlockList blocks1;
+    //PixyBlockList blocks2;
     //PixyBlockList blocks3;
     ElapsedTime elapsedTime = new ElapsedTime();
     ElapsedTime elapsedTime2 = new ElapsedTime();
@@ -57,18 +58,19 @@ public class TestPixyCam extends OpMode {
         // Update every tenth of a second.
         if (elapsedTime.milliseconds() > 100) {
             elapsedTime.reset();
-            blocks1 = pixyCam.getBiggestBlocks(1);
-            blocks2 = pixyCam.getBiggestBlocks(2);
+            block = pixyCam.getBiggestBlock(1);
+            // blocks1 = pixyCam.getBiggestBlocks(1);
+            //blocks2 = pixyCam.getBiggestBlocks(2);
             //blocks3 = pixyCam.getBiggestBlocks(3);
-            telemetry.addData("Counts", "%d/%d", blocks1.totalCount, blocks2.totalCount);
             //file.println("----------------------------");
             //file.format("Elapsed: %s Counts: %d/%d\n", elapsedTime2.toString(), blocks2.totalCount, blocks3.totalCount);
-            for (int i = 0; i < blocks1.size(); i++) {
-                PixyBlock block = blocks1.get(i);
-                if (!block.isEmpty()) {
-                    telemetry.addData("Block 1[" + i + "]", block.toString());
-                }
-            }
+//            for (int i = 0; i < blocks1.size(); i++) {
+//                PixyBlock block = blocks1.get(i);
+//                if (!block.isEmpty()) {
+//                    telemetry.addData("Block 1[" + i + "]", block.toString());
+//                }
+//            }
+            /*
             for (int i = 0; i < blocks2.size(); i++) {
                 PixyBlock block = blocks2.get(i);
                 if (!block.isEmpty()) {
@@ -76,6 +78,7 @@ public class TestPixyCam extends OpMode {
                     //file.format("Block2[%d]: %s\n", i, block.toString());
                 }
             }
+            */
             //for (int i = 0; i < blocks3.size(); i++) {
             //    PixyBlock block = blocks3.get(i);
             //    if (!block.isEmpty()) {
@@ -83,6 +86,8 @@ public class TestPixyCam extends OpMode {
             //        file.format("Block3[%d]: %s\n", i, block.toString());
             //    }
             //}
+
+            telemetry.addData("Block ", block.toString());
             telemetry.update();
         }
     }

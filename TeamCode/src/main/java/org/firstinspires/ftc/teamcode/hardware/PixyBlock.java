@@ -39,12 +39,12 @@ public class PixyBlock {
         this(signature, TypeConversion.unsignedByteToInt(blockCount), x, y, width, height);
     }
 
-    public PixyBlock(int signature, int blockCount, byte x, byte y, byte width, byte height) {
+    public PixyBlock(int signature, int blockCount, int x, int y, int width, int height) {
         this.signature = signature;
-        this.x = TypeConversion.unsignedByteToInt(x);
-        this.y = TypeConversion.unsignedByteToInt(y);
-        this.width = TypeConversion.unsignedByteToInt(width);
-        this.height = TypeConversion.unsignedByteToInt(height);
+        this.x = x;
+        this.y = y;
+        this.width = width;
+        this.height = height;
         this.blockCount = blockCount;
     }
 
