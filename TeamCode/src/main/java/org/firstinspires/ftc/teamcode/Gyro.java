@@ -26,25 +26,10 @@ public class Gyro {
     private double      headingBias = 0.0;            // Gyro heading adjustment
 
 
+    public void init (HardwareMap hwMap) {
 
-
-
-    public Gyro() {
-    }
-
-    /**
-     * Init the drive train.
-     *
-     * @param ahwMap -- the hardwareMap being used
-     */
-    public void init (HardwareMap ahwMap) {
-
-        hwMap = ahwMap;
-
-        // Do all the gyro setup stuff
-        // Setup the gyro
         AdafruitBNO055IMU.Parameters parameters = new AdafruitBNO055IMU.Parameters();
-        parameters.angleUnit           = AdafruitBNO055IMU.AngleUnit.DEGREES;
+        parameters.angleUnit       = AdafruitBNO055IMU.AngleUnit.DEGREES;
         parameters.accelUnit           = AdafruitBNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
         //parameters.calibrationDataFile = "AdafruitIMUCalibration.json"; // see the calibration sample opmode
         parameters.mode = AdafruitBNO055IMU.SensorMode.IMU;

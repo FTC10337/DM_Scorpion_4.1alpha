@@ -13,9 +13,9 @@ public class ArcadeMode extends OpMode
     DriveTrain scorpion = new DriveTrain();
 
     private ElapsedTime runtime = new ElapsedTime();
-    boolean slowMo = false;
-    double turnCoefficient = 1;
-    double driveCoefficient = 1;
+    boolean turbo = false;
+    double turnCoefficient = 4;
+    double driveCoefficient = 4             ;
 
     private ElapsedTime slowTelemetry = new ElapsedTime();
 
@@ -52,22 +52,42 @@ public class ArcadeMode extends OpMode
         // Setup a variable for each drive wheel to save power level for telemetry
         double leftPower;
         double rightPower;
+        double liftPower;
+//        double intakePowerIn;
+//        double intakePowerOut;
+        double pivotPower;
 
         // Arcade(POV) Mode uses left stick to go forward, and right stick to turn.
         double drive = -gamepad1.left_stick_y;
         double turn  =  gamepad1.right_stick_x;
 
+        double lift = gamepad2.left_stick_y;
+//        double intakeControlIn = gamepad2.right_trigger;
+//        double intakeControlOut = gamepad2.left_trigger;
+        double pivotControl = gamepad2.right_stick_y;
+
+
         //Activating slowMo slow motion mode with controller left bumper
-        if (gamepad1.left_bumper) {
-            slowMo = true;
-            turnCoefficient = 3;
-            driveCoefficient = 1.5;
-        }else{
-            slowMo = false;
-            turnCoefficient = 1.5;
+        if (gamepad1.right_bumper) {
+            turbo = true;
+            turnCoefficient = 2;
             driveCoefficient = 1;
+        }else{
+            turbo = false;
+            turnCoefficient = 4;
+            driveCoefficient = 4;
         }
-        telemetry.addData("SlowMo mode is ", slowMo);
+        telemetry.addData("TURBO mode is ", turbo);
+
+
+        if (gamepad2.left_bumper) {
+            scorpion.intake.setPower(-1.0);
+        }else if (gamepad2.right_bumper) {
+            scorpion.intake.setPower(1.0);
+        }else {
+            scorpion.intake.setPower(0);
+        }
+
 
         // Smooth and deadzone the joystick values
         drive = scorpion.smoothPowerCurve(scorpion.deadzone(drive, 0.10)) / driveCoefficient;
@@ -76,6 +96,16 @@ public class ArcadeMode extends OpMode
 
         leftPower    = Range.clip(drive + turn, -1.0, 1.0) ;
         rightPower   = Range.clip(drive - turn, -1.0, 1.0) ;
+
+        liftPower    = Range.clip(lift, -1.0, 1.0);
+//        intakePowerIn  = Range.clip(intakeControlIn, 0, 1.0);
+//        intakePowerOut = Range.clip(intakeControlOut, -1.0, 0);
+        pivotPower = Range.clip(pivotControl/3, -0.5, 0.5);
+//
+//        scorpion.intake.setPower(intakePowerIn);
+//        scorpion.intake.setPower(intakePowerOut);
+        scorpion.pivot.setPower(pivotPower);
+        scorpion.latchLift.setPower(liftPower);
 
         // Update the encoder data every 1/10 second
         if (slowTelemetry.milliseconds() > 10) {
