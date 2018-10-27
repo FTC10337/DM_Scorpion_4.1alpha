@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 //import org.firstinspires.ftc.robotcontroller.external.samples.HardwarePushbot;
 
 @Autonomous(name="Scorpion: TestGyro", group="DarkMatter2019")
-@Disabled
+//@Disabled
 public class TestGyro extends Scorpion_AutoOpMode {
 
 

@@ -1,5 +1,5 @@
 /*
- *  This class defines and encapsulates everything around the drivetrain
+ *  This class defines and encapsulates everything around the DriveTrain
  */
 package org.firstinspires.ftc.teamcode;
 
@@ -23,7 +23,7 @@ public class DriveTrain {
     public DcMotor latchLift = null;
     public DcMotor intake = null;
     public DcMotor pivot = null;
-    private HardwareMap hwMap           =  null;
+    private HardwareMap hwMap = null;
 
 
     public DriveTrain() {
@@ -57,7 +57,7 @@ public class DriveTrain {
 
         latchLift.setDirection(DcMotor.Direction.REVERSE);
         intake.setDirection(DcMotor.Direction.FORWARD);
-        pivot.setDirection(DcMotor.Direction.REVERSE);
+        pivot.setDirection(DcMotor.Direction.FORWARD);
 
         //setting motors to use Encoders
         setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
