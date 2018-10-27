@@ -66,12 +66,13 @@ public class ArcadeMode extends OpMode
             turbo = true;
             turnCoefficient = 2;
             driveCoefficient = 1;
-        }else{
+            telemetry.addData("TURBO is", "ON");
+        }else {
             turbo = false;
             turnCoefficient = 4;
             driveCoefficient = 3;
+            telemetry.addData("TURBO is", "OFF");
         }
-        telemetry.addData("TURBO mode is ", turbo);
 
 
         if (gamepad2.left_bumper) {
@@ -90,7 +91,7 @@ public class ArcadeMode extends OpMode
         leftPower    = Range.clip(drive + turn, -1.0, 1.0) ;
         rightPower   = Range.clip(drive - turn, -1.0, 1.0) ;
 
-        // Smooth and deadzone the lift and pivot inputs before using
+        // Smooth and DeadZone the lift and pivot inputs before using
         lift = scorpion.smoothPowerCurve(scorpion.deadzone(lift, 0.1));
         liftPower    = Range.clip(lift, -1.0, 1.0);
         pivotControl = scorpion.smoothPowerCurve(scorpion.deadzone(pivotControl, 0.1));
@@ -125,7 +126,6 @@ public class ArcadeMode extends OpMode
      * Code to run ONCE after the driver hits STOP
      */
     @Override
-    public void stop() {
-    }
+    public void stop() {}
 
 }
