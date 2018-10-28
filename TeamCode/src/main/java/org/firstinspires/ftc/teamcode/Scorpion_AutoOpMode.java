@@ -7,23 +7,17 @@
 
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.hardware.adafruit.AdafruitBNO055IMU;
-import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.RobotLog;
 
-import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import com.qualcomm.robotcore.util.Range;
 
 abstract public class Scorpion_AutoOpMode extends LinearOpMode {
 
     /* Declare OpMode members. */
-    Scorpion scorpion = new Scorpion();
-    Gyro gyro = new Gyro();
+    ScorpionHW scorpion = new ScorpionHW();
 
     static final double     COUNTS_PER_MOTOR_REV    = 7 ;    // Neverest 20
     static final double     DRIVE_GEAR_REDUCTION    = 40 * 72 / 48  ;     // This is < 1.0 if geared UP
@@ -49,10 +43,7 @@ abstract public class Scorpion_AutoOpMode extends LinearOpMode {
         RobotLog.i("DM14374 -- Pressed Init of AutoMode");
 
         // Init the hardware
-        scorpion.init(hardwareMap); // Drivetrain
-        gyro.init(hardwareMap);     // Gyro
-
-
+        scorpion.init(hardwareMap); // ScorpionHW
 
         //setting motors to use Encoders and BRAKE mode
         scorpion.driveTrain.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -75,7 +66,9 @@ abstract public class Scorpion_AutoOpMode extends LinearOpMode {
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
-        gyro.zeroGyro();            // Make sure our zero point on gyro is correct
+
+        // Make sure our zero point on gyro is correct
+        scorpion.gyro.zeroGyro();
 
         // And execute the autoroutine -- must be defined in a child class for each Auto program
         autoRunPath();
@@ -83,15 +76,12 @@ abstract public class Scorpion_AutoOpMode extends LinearOpMode {
         telemetry.addData("Path", "Complete");
         telemetry.update();
 
-
     }
 
     /**
      * This method should be Overriden by each OpMode to the code required to actually run the sequence for that Auto
      */
     abstract void autoRunPath();
-
-
 
     /*
      *  Method to perfmorm a relative move, based on encoder counts.
@@ -101,6 +91,7 @@ abstract public class Scorpion_AutoOpMode extends LinearOpMode {
      *  2) Move runs out of time
      *  3) Driver stops the opmode running.
      */
+
     public void encoderDrive(double speed,
                              double leftInches,
                              double rightInches,
@@ -193,7 +184,7 @@ abstract public class Scorpion_AutoOpMode extends LinearOpMode {
             sleep(1);;
         }
 
-        RobotLog.i("DM14347- gyroTurn done   heading actual:" + gyro.readGyro());
+        RobotLog.i("DM14347- gyroTurn done   heading actual:" + scorpion.gyro.readGyro());
     }
 
 
@@ -249,7 +240,7 @@ abstract public class Scorpion_AutoOpMode extends LinearOpMode {
 
 
         // calculate error in -179 to +180 range  (
-        robotError = targetAngle - gyro.readGyro();
+        robotError = targetAngle - scorpion.gyro.readGyro();
         while (robotError > 180)  robotError -= 360;
         while (robotError <= -180) robotError += 360;
         return robotError;

@@ -14,36 +14,32 @@ import com.qualcomm.robotcore.util.RobotLog;
 public class ArcadeMode extends OpMode
 {
 
-    Scorpion scorpion = new Scorpion();
+    ScorpionHW scorpion = new ScorpionHW();
 
     private ElapsedTime runtime = new ElapsedTime();
     boolean turbo = false;
     double turnCoefficient = 4;
     double driveCoefficient = 3;
 
-    private ElapsedTime slowTelemetry = new ElapsedTime();
-
     @Override
     public void init() {
 
-        telemetry.addData("Scorpion Says", "Hello DarkMatter!");
         scorpion.init(hardwareMap);
         // Tell the driver that initialization is complete.
-        telemetry.addData("Status", "Initialized");
+        telemetry.addData("Scorpion Says", "Hello DarkMatter!");
         telemetry.update();
         RobotLog.i("Initialized, Ready to Start!");
+
     }
 
     /*
      * Code to run REPEATEDLY after the driver hits INIT, but before they hit PLAY
      */
     @Override
-    public void init_loop() {
-    }
+    public void init_loop() {}
 
     @Override
     public void start() {
-        slowTelemetry.reset();
         runtime.reset();
     }
 
@@ -65,7 +61,7 @@ public class ArcadeMode extends OpMode
         double lift = gamepad2.left_stick_y;
         double pivotControl = gamepad2.right_stick_y;
 
-        //Activating Turbo mode with Gamepad1 right bumper
+        //Activating Turbo mode with GamePad1 right bumper
         if (gamepad1.right_bumper) {
             turbo = true;
             turnCoefficient = 2;
@@ -78,7 +74,7 @@ public class ArcadeMode extends OpMode
             telemetry.addData("TURBO is", "OFF");
         }
 
-        //Activating Intake with Gamepad2 right and left bumpers
+        //Activating Intake with GamePad2 right and left bumpers
         if (gamepad2.left_bumper) {
             scorpion.intakePivot.intake.setPower(-1.0);
         }else if (gamepad2.right_bumper) {
@@ -87,25 +83,28 @@ public class ArcadeMode extends OpMode
             scorpion.intakePivot.intake.setPower(0);
         }
 
-        // Smooth and DeadZone the joystick values
-        drive = scorpion.driveTrain.smoothPowerCurve(scorpion.driveTrain.deadzone(drive, 0.10)) / driveCoefficient;
-        turn = scorpion.driveTrain.smoothPowerCurve(scorpion.driveTrain.deadzone(turn, 0.10)) / turnCoefficient;
+        // Smooth and DeadZone the joystick values for DriveTrain
+        drive        = scorpion.driveTrain.smoothPowerCurve(scorpion.driveTrain.deadzone(drive, 0.10)) / driveCoefficient;
+        turn         = scorpion.driveTrain.smoothPowerCurve(scorpion.driveTrain.deadzone(turn, 0.10)) / turnCoefficient;
         leftPower    = Range.clip(drive + turn, -1.0, 1.0) ;
         rightPower   = Range.clip(drive - turn, -1.0, 1.0) ;
 
-        // Smooth and DeadZone the lift and pivot inputs before using
-        lift = scorpion.driveTrain.smoothPowerCurve(scorpion.driveTrain.deadzone(lift, 0.1));
+        // Smooth and DeadZone the LatchLift and Pivot inputs before using
+        lift         = scorpion.driveTrain.smoothPowerCurve(scorpion.driveTrain.deadzone(lift, 0.1));
         liftPower    = Range.clip(lift, -1.0, 1.0);
         pivotControl = scorpion.driveTrain.smoothPowerCurve(scorpion.driveTrain.deadzone(pivotControl, 0.1));
-        pivotPower = Range.clip(pivotControl/3, -0.5, 0.5);
+        pivotPower   = Range.clip(pivotControl/3, -0.5, 0.5);
 
+        // Send calculated power to wheels
+        scorpion.driveTrain.setPower(leftPower, rightPower);
 
+        // Send calculated power to Pivot and LatchLift
         scorpion.intakePivot.pivot.setPower(pivotPower);
         scorpion.latch.latchLift.setPower(liftPower);
 
         // Update the encoder data every 1/10 second
-        if (slowTelemetry.milliseconds() > 10) {
-            slowTelemetry.reset();
+        if (runtime.milliseconds() > 10) {
+            runtime.reset();
 
             telemetry.addData("Path0",  "Now at %7d :%7d :%7d :%7d",
                     scorpion.driveTrain.leftFront.getCurrentPosition(),    // labeled B
@@ -117,9 +116,6 @@ public class ArcadeMode extends OpMode
                     telemetry.addData("Motors", "left (%.2f), right (%.2f)", leftPower, rightPower);
                     telemetry.update();
         }
-
-        // Send calculated power to wheels
-        scorpion.driveTrain.setPower(leftPower, rightPower);
 
     }
 

@@ -1,5 +1,5 @@
 /*
- *  This class defines and encapsulates everything around the drivetrain
+ *  This class defines and encapsulates everything around the Gyro
  */
 package org.firstinspires.ftc.teamcode;
 
@@ -15,16 +15,14 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 public class Gyro {
 
-    // Declare OpMode members.
-    private HardwareMap hwMap           =  null;
-
-    // Gyro stuff
     private BNO055IMU gyro = null;
+    private HardwareMap hwMap = null;
 
     // Variables used for reading Gyro
     private Orientation angles;
     private double      headingBias = 0.0;            // Gyro heading adjustment
 
+    public Gyro() {}
 
     public void init (HardwareMap hwMap) {
 
@@ -45,7 +43,6 @@ public class Gyro {
 
     }
 
-
     /**
      * Read the current heading direction.  Use a heading bias if we recorded one at start to account for drift during
      * the init phase of match
@@ -57,7 +54,6 @@ public class Gyro {
         return angles.secondAngle - headingBias;
     }
 
-
     /**
      * Record the current heading and use that as the 0 heading point for gyro reads
      * @return
@@ -65,8 +61,6 @@ public class Gyro {
     void zeroGyro() {
         headingBias = readGyro();
     }
-
-
 
 }
 

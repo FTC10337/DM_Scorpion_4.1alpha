@@ -5,6 +5,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import com.qualcomm.robotcore.util.RobotLog;
 
 @Autonomous(name="Scorpion: AutoMode", group="DarkMatter2019")
 //@Disabled
@@ -13,7 +14,7 @@ public class AutoMode extends Scorpion_AutoOpMode {
     @Override
     public void autoRunPath() {
 
-        gyro.zeroGyro();    // Make sure gyro is zeroed at start
+        scorpion.gyro.zeroGyro();    // Make sure gyro is zeroed at start
 
         scorpion.latch.latchLift.setPower(-1.0);   // Lowering Scorpion FullPower
         sleep(5000);             // Go down for 5 seconds
