@@ -22,7 +22,7 @@ import com.qualcomm.robotcore.util.Range;
 abstract public class Scorpion_AutoOpMode extends LinearOpMode {
 
     /* Declare OpMode members. */
-    DriveTrain scorpion = new DriveTrain();
+    Scorpion scorpion = new Scorpion();
     Gyro gyro = new Gyro();
 
     static final double     COUNTS_PER_MOTOR_REV    = 7 ;    // Neverest 20
@@ -55,16 +55,16 @@ abstract public class Scorpion_AutoOpMode extends LinearOpMode {
 
 
         //setting motors to use Encoders and BRAKE mode
-        scorpion.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        scorpion.setZeroMode(DcMotor.ZeroPowerBehavior.BRAKE);
-        scorpion.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        scorpion.driveTrain.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        scorpion.driveTrain.setZeroMode(DcMotor.ZeroPowerBehavior.BRAKE);
+        scorpion.driveTrain.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         // Send telemetry message to indicate successful Encoder reset
         telemetry.addData("Path0",  "Starting at %7d :%7d :%7d :%7d",
-                scorpion.leftFront.getCurrentPosition(),
-                scorpion.leftRear.getCurrentPosition(),
-                scorpion.rightFront.getCurrentPosition(),
-                scorpion.rightRear.getCurrentPosition());
+                scorpion.driveTrain.leftFront.getCurrentPosition(),
+                scorpion.driveTrain.leftRear.getCurrentPosition(),
+                scorpion.driveTrain.rightFront.getCurrentPosition(),
+                scorpion.driveTrain.rightRear.getCurrentPosition());
 
         // Send telemetry message to signify robot waiting;
         telemetry.addData("Status", "Scorpion initialized");
@@ -117,23 +117,23 @@ abstract public class Scorpion_AutoOpMode extends LinearOpMode {
         if (opModeIsActive()) {
 
             // Determine new target position, and pass to motor controller
-            newLeftTargetF = scorpion.leftFront.getCurrentPosition() + (int)(leftInches * COUNTS_PER_INCH);
-            newLeftTargetR = scorpion.leftRear.getCurrentPosition() + (int)(leftInches * COUNTS_PER_INCH);
-            newRightTargetF = scorpion.rightFront.getCurrentPosition() + (int)(rightInches * COUNTS_PER_INCH);
-            newRightTargetR = scorpion.rightRear.getCurrentPosition() + (int)(rightInches * COUNTS_PER_INCH);
-            scorpion.leftFront.setTargetPosition(newLeftTargetF);
-            scorpion.leftRear.setTargetPosition(newLeftTargetR);
-            scorpion.rightFront.setTargetPosition(newRightTargetF);
-            scorpion.rightRear.setTargetPosition(newRightTargetR);
+            newLeftTargetF = scorpion.driveTrain.leftFront.getCurrentPosition() + (int)(leftInches * COUNTS_PER_INCH);
+            newLeftTargetR = scorpion.driveTrain.leftRear.getCurrentPosition() + (int)(leftInches * COUNTS_PER_INCH);
+            newRightTargetF = scorpion.driveTrain.rightFront.getCurrentPosition() + (int)(rightInches * COUNTS_PER_INCH);
+            newRightTargetR = scorpion.driveTrain.rightRear.getCurrentPosition() + (int)(rightInches * COUNTS_PER_INCH);
+            scorpion.driveTrain.leftFront.setTargetPosition(newLeftTargetF);
+            scorpion.driveTrain.leftRear.setTargetPosition(newLeftTargetR);
+            scorpion.driveTrain.rightFront.setTargetPosition(newRightTargetF);
+            scorpion.driveTrain.rightRear.setTargetPosition(newRightTargetR);
 
             // Turn On RUN_TO_POSITION
-            scorpion.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            scorpion.driveTrain.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
             // reset the timeout time and start motion.
             runtime.reset();
 
             // Max power to both sides is the same
-            scorpion.setPower(speed, speed);
+            scorpion.driveTrain.setPower(speed, speed);
 
             // keep looping while we are still active, and there is time left, and both motors are running.
             // Note: We use (isBusy() && isBusy()) in the loop test, which means that when EITHER motor hits
@@ -143,23 +143,26 @@ abstract public class Scorpion_AutoOpMode extends LinearOpMode {
             // onto the next step, use (isBusy() || isBusy()) in the loop test.
             while (opModeIsActive() &&
                    (runtime.seconds() < timeoutS) &&
-                   (scorpion.leftFront.isBusy() && scorpion.leftRear.isBusy() && scorpion.rightFront.isBusy() && scorpion.rightRear.isBusy())) {
+                   (scorpion.driveTrain.leftFront.isBusy()
+                           && scorpion.driveTrain.leftRear.isBusy()
+                           && scorpion.driveTrain.rightFront.isBusy()
+                           && scorpion.driveTrain.rightRear.isBusy())) {
 
                 // Display it for the driver.
                 telemetry.addData("Path1",  "Running to %7d :%7d :%7d :%7d", newLeftTargetF, newLeftTargetR, newRightTargetF, newRightTargetR);
                 telemetry.addData("Path2",  "Running at %7d :%7d :%7d :%7d",
-                                            scorpion.leftFront.getCurrentPosition(),
-                                            scorpion.leftRear.getCurrentPosition(),
-                                            scorpion.rightFront.getCurrentPosition(),
-                                            scorpion.rightRear.getCurrentPosition());
+                                            scorpion.driveTrain.leftFront.getCurrentPosition(),
+                                            scorpion.driveTrain.leftRear.getCurrentPosition(),
+                                            scorpion.driveTrain.rightFront.getCurrentPosition(),
+                                            scorpion.driveTrain.rightRear.getCurrentPosition());
                 telemetry.update();
             }
 
             // Stop all motion;
-            scorpion.setPower(0, 0);
+            scorpion.driveTrain.setPower(0, 0);
 
             // Turn off RUN_TO_POSITION
-            scorpion.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            scorpion.driveTrain.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
             //  sleep(250);   // optional pause after each move
         }
@@ -229,7 +232,7 @@ abstract public class Scorpion_AutoOpMode extends LinearOpMode {
         }
 
         // Send desired speeds to motors.
-        scorpion.setPower(leftSpeed, rightSpeed);
+        scorpion.driveTrain.setPower(leftSpeed, rightSpeed);
 
         return onTarget;
     }

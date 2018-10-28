@@ -15,9 +15,9 @@ public class AutoMode extends Scorpion_AutoOpMode {
 
         gyro.zeroGyro();    // Make sure gyro is zeroed at start
 
-        scorpion.latchLift.setPower(-1.0);   // Lowering Scorpion FullPower
+        scorpion.latch.latchLift.setPower(-1.0);   // Lowering Scorpion FullPower
         sleep(5000);             // Go down for 5 seconds
-        scorpion.latchLift.setPower(0.0);
+        scorpion.latch.latchLift.setPower(0.0);
 
         gyroTurn(TURN_SPEED, -5, P_TURN_COEFF); //Turn to insure off hook
         sleep(500);
@@ -28,10 +28,10 @@ public class AutoMode extends Scorpion_AutoOpMode {
                 2.0);
         sleep(300);
 
-        scorpion.pivot.setPower(-0.5);      //Pushing Pivot forward
+        scorpion.intakePivot.pivot.setPower(-0.5);      //Pushing Pivot forward
         sleep(200);
 
-        scorpion.intake.setPower(-1.0);     //Using the Intake to place the Team Mark
+        scorpion.intakePivot.intake.setPower(-1.0);     //Using the Intake to place the Team Mark
         sleep(3000);
 
 //        gyroTurn(TURN_SPEED, 135, P_TURN_COEFF);

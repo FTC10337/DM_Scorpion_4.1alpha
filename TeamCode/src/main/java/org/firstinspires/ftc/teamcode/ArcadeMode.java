@@ -13,7 +13,8 @@ import com.qualcomm.robotcore.util.RobotLog;
 //@Disabled
 public class ArcadeMode extends OpMode
 {
-    DriveTrain scorpion = new DriveTrain();
+
+    Scorpion scorpion = new Scorpion();
 
     private ElapsedTime runtime = new ElapsedTime();
     boolean turbo = false;
@@ -79,38 +80,38 @@ public class ArcadeMode extends OpMode
 
         //Activating Intake with Gamepad2 right and left bumpers
         if (gamepad2.left_bumper) {
-            scorpion.intake.setPower(-1.0);
+            scorpion.intakePivot.intake.setPower(-1.0);
         }else if (gamepad2.right_bumper) {
-            scorpion.intake.setPower(1.0);
+            scorpion.intakePivot.intake.setPower(1.0);
         }else {
-            scorpion.intake.setPower(0);
+            scorpion.intakePivot.intake.setPower(0);
         }
 
         // Smooth and DeadZone the joystick values
-        drive = scorpion.smoothPowerCurve(scorpion.deadzone(drive, 0.10)) / driveCoefficient;
-        turn = scorpion.smoothPowerCurve(scorpion.deadzone(turn, 0.10)) / turnCoefficient;
+        drive = scorpion.driveTrain.smoothPowerCurve(scorpion.driveTrain.deadzone(drive, 0.10)) / driveCoefficient;
+        turn = scorpion.driveTrain.smoothPowerCurve(scorpion.driveTrain.deadzone(turn, 0.10)) / turnCoefficient;
         leftPower    = Range.clip(drive + turn, -1.0, 1.0) ;
         rightPower   = Range.clip(drive - turn, -1.0, 1.0) ;
 
         // Smooth and DeadZone the lift and pivot inputs before using
-        lift = scorpion.smoothPowerCurve(scorpion.deadzone(lift, 0.1));
+        lift = scorpion.driveTrain.smoothPowerCurve(scorpion.driveTrain.deadzone(lift, 0.1));
         liftPower    = Range.clip(lift, -1.0, 1.0);
-        pivotControl = scorpion.smoothPowerCurve(scorpion.deadzone(pivotControl, 0.1));
+        pivotControl = scorpion.driveTrain.smoothPowerCurve(scorpion.driveTrain.deadzone(pivotControl, 0.1));
         pivotPower = Range.clip(pivotControl/3, -0.5, 0.5);
 
 
-        scorpion.pivot.setPower(pivotPower);
-        scorpion.latchLift.setPower(liftPower);
+        scorpion.intakePivot.pivot.setPower(pivotPower);
+        scorpion.latch.latchLift.setPower(liftPower);
 
         // Update the encoder data every 1/10 second
         if (slowTelemetry.milliseconds() > 10) {
             slowTelemetry.reset();
 
             telemetry.addData("Path0",  "Now at %7d :%7d :%7d :%7d",
-                    scorpion.leftFront.getCurrentPosition(),    // labeled B
-                    scorpion.leftRear.getCurrentPosition(),     // labeled C
-                    scorpion.rightFront.getCurrentPosition(),   // labeled A
-                    scorpion.rightRear.getCurrentPosition());   // labeled D
+                    scorpion.driveTrain.leftFront.getCurrentPosition(),    // labeled B
+                    scorpion.driveTrain.leftRear.getCurrentPosition(),     // labeled C
+                    scorpion.driveTrain.rightFront.getCurrentPosition(),   // labeled A
+                    scorpion.driveTrain.rightRear.getCurrentPosition());   // labeled D
                     // Show the elapsed game time and wheel power.
                     //telemetry.addData("Status", "Run Time: " + runtime.toString());
                     telemetry.addData("Motors", "left (%.2f), right (%.2f)", leftPower, rightPower);
@@ -118,7 +119,7 @@ public class ArcadeMode extends OpMode
         }
 
         // Send calculated power to wheels
-        scorpion.setPower(leftPower, rightPower);
+        scorpion.driveTrain.setPower(leftPower, rightPower);
 
     }
 

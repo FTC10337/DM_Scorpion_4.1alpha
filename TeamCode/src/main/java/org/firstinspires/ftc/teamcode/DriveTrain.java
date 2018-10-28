@@ -3,15 +3,9 @@
  */
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.hardware.adafruit.AdafruitBNO055IMU;
-import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.Range;
-import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 
 public class DriveTrain {
 
@@ -20,14 +14,9 @@ public class DriveTrain {
     public DcMotor leftRear = null;
     public DcMotor rightFront = null;
     public DcMotor rightRear = null;
-    public DcMotor latchLift = null;
-    public DcMotor intake = null;
-    public DcMotor pivot = null;
     private HardwareMap hwMap = null;
 
-
-    public DriveTrain() {
-    }
+    public DriveTrain() {}
 
     /**
      * Init the drive train.
@@ -44,33 +33,19 @@ public class DriveTrain {
         rightFront = hwMap.get(DcMotor.class, "right-front");
         rightRear = hwMap.get(DcMotor.class, "right-rear");
 
-        //initialize the Latch Lift mechanism, Intake, Pivot,
-        latchLift = hwMap.get(DcMotor.class, "latch-lift");
-        intake = hwMap.get(DcMotor.class, "intake");
-        pivot = hwMap.get(DcMotor.class, "pivot");
-
         //Setting direction of motor's rotation
         leftFront.setDirection(DcMotor.Direction.REVERSE);
         leftRear.setDirection(DcMotor.Direction.REVERSE);
         rightFront.setDirection(DcMotor.Direction.FORWARD);
         rightRear.setDirection(DcMotor.Direction.FORWARD);
 
-        latchLift.setDirection(DcMotor.Direction.REVERSE);
-        intake.setDirection(DcMotor.Direction.FORWARD);
-        pivot.setDirection(DcMotor.Direction.FORWARD);
-
         //setting motors to use Encoders
         setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        //setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);       // Temporary until encoders fixed
         setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        //setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);       // Temporary until encoders fixed
 
         //Setting motors with zero power when initializing
         setPower(0.0, 0.0);
-        intake.setPower(0);
-        pivot.setPower(0);
-        pivot.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        latchLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        latchLift.setPower(0);
     }
 
     /**
