@@ -1,3 +1,6 @@
+/*
+ *  ArcadeMode:
+ */
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -61,7 +64,7 @@ public class ArcadeMode extends OpMode
         double lift = gamepad2.left_stick_y;
         double pivotControl = gamepad2.right_stick_y;
 
-        //Activating slowMo slow motion mode with controller left bumper
+        //Activating Turbo mode with Gamepad1 right bumper
         if (gamepad1.right_bumper) {
             turbo = true;
             turnCoefficient = 2;
@@ -74,7 +77,7 @@ public class ArcadeMode extends OpMode
             telemetry.addData("TURBO is", "OFF");
         }
 
-
+        //Activating Intake with Gamepad2 right and left bumpers
         if (gamepad2.left_bumper) {
             scorpion.intake.setPower(-1.0);
         }else if (gamepad2.right_bumper) {
@@ -83,11 +86,9 @@ public class ArcadeMode extends OpMode
             scorpion.intake.setPower(0);
         }
 
-
         // Smooth and DeadZone the joystick values
         drive = scorpion.smoothPowerCurve(scorpion.deadzone(drive, 0.10)) / driveCoefficient;
         turn = scorpion.smoothPowerCurve(scorpion.deadzone(turn, 0.10)) / turnCoefficient;
-
         leftPower    = Range.clip(drive + turn, -1.0, 1.0) ;
         rightPower   = Range.clip(drive - turn, -1.0, 1.0) ;
 
@@ -115,7 +116,6 @@ public class ArcadeMode extends OpMode
                     telemetry.addData("Motors", "left (%.2f), right (%.2f)", leftPower, rightPower);
                     telemetry.update();
         }
-
 
         // Send calculated power to wheels
         scorpion.setPower(leftPower, rightPower);
