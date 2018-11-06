@@ -1,5 +1,5 @@
 /*
- *  ArcadeMode:
+ *  This class defines ArcadeMode
  */
 package org.firstinspires.ftc.teamcode;
 
@@ -11,10 +11,10 @@ import com.qualcomm.robotcore.util.RobotLog;
 
 @TeleOp(name="ArcadeMode", group="DarkMatter2019")
 //@Disabled
-public class ArcadeMode extends OpMode
-{
+public class ArcadeMode extends OpMode {
 
     ScorpionHW scorpion = new ScorpionHW();
+    LedColorLibrary colors = new LedColorLibrary();
 
     private ElapsedTime runtime = new ElapsedTime();
     boolean turbo = false;
@@ -77,8 +77,10 @@ public class ArcadeMode extends OpMode
         //Activating Intake with GamePad2 right and left bumpers
         if (gamepad2.left_bumper) {
             scorpion.intakePivot.intake.setPower(-1.0);
+            scorpion.led.setColor(colors.red);
         }else if (gamepad2.right_bumper) {
             scorpion.intakePivot.intake.setPower(1.0);
+            scorpion.led.setColor(colors.gold);
         }else {
             scorpion.intakePivot.intake.setPower(0);
         }

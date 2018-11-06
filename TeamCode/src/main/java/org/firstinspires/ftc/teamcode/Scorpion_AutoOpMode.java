@@ -36,7 +36,6 @@ abstract public class Scorpion_AutoOpMode extends LinearOpMode {
     static final double     P_DRIVE_COEFF_2         = 0.25;  // Intenionally large so robot "wiggles" around the target setpoint while driving
 
 
-
     @Override
     public void runOpMode() {
 
@@ -159,8 +158,6 @@ abstract public class Scorpion_AutoOpMode extends LinearOpMode {
         }
     }
 
-
-
     /**
      *  Method to spin on central axis to point in a new direction.
      *  Move will stop if either of these conditions occur:
@@ -237,7 +234,6 @@ abstract public class Scorpion_AutoOpMode extends LinearOpMode {
     public double getError(double targetAngle) {
 
         double robotError;
-
 
         // calculate error in -179 to +180 range  (
         robotError = targetAngle - scorpion.gyro.readGyro();
