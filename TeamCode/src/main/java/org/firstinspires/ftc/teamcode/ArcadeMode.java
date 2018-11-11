@@ -77,10 +77,10 @@ public class ArcadeMode extends OpMode {
         //Activating Intake with GamePad2 right and left bumpers
         if (gamepad2.left_bumper) {
             scorpion.intakePivot.intake.setPower(-1.0);
-            scorpion.led.setColor(colors.red);
+            scorpion.led.setColor(colors.Dark_Red);
         }else if (gamepad2.right_bumper) {
             scorpion.intakePivot.intake.setPower(1.0);
-            scorpion.led.setColor(colors.gold);
+            scorpion.led.setColor(colors.Purple_Strobe);
         }else {
             scorpion.intakePivot.intake.setPower(0);
         }
